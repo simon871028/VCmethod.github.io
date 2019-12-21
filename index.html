@@ -272,7 +272,7 @@
             </fieldset>
             <fieldset>
                 <div align="center">
-                    <button name="button" type="button" onclick="calculate()" id="button" data-submit="...Sending"
+                    <button name="button" type="button" id="button" data-submit="...Sending"
                         class="btn-btn-success">Evaluate</button>
                 </div>
             </fieldset>
@@ -293,51 +293,73 @@
 
 </html>
 
-<script>
+<script type="text/javascript">
     $(document).ready(function () {
         $("#button").click(function () {
 
             if ($("#AE").val() == "") {
                 alert("Please fill in 'Annual Earnings' !");
                 eval("document.contact['AE'].focus()");
+                return;
             }
             else if ($("#AE").val() < 0) {
                 alert("Invalid Value! Pleae fill in postive numbers !");
-                eval("document.contact['AE'].focus()");
+                var result = 'Failed to evaluate due to error input !';
+                send(result);
                 $("#show").hide();
                 $("#OK").hide();
-            } else if ($("#InYear").val() == "") {
+                return;
+            }
+            else if ($("#InYear").val() == "") {
                 alert("Please fill in 'Investment Exit Year' !");
                 eval("document.contact['InYear'].focus()");
+                return;
             }
             else if ($("#InYear").val() < 0) {
                 alert("Invalid Value! Pleae fill in postive numbers !");
-                eval("document.contact['InYear'].focus()");
+                var result = 'Failed to evaluate due to error input !';
+                send(result);
                 $("#show").hide();
                 $("#OK").hide();
+                return;
             }
             else if ($("#PE").val() == "") {
                 alert("Please fill in 'PE Ratio' !");
                 eval("document.contact['PE'].focus()");
+                return;
+
             } else if ($("#PE").val() < 0) {
                 alert("Invalid Value! Pleae fill in postive numbers !");
-                eval("document.contact['PE'].focus()");
-                $("#show").hide();
+                var result = 'Failed to evaluate due to error input !';
+                send(result);
                 $("#OK").hide();
+                return;
+
             }
             else if ($("#ROI").val() == "") {
                 alert("Please fill in 'Requried Rate of Return' !");
                 eval("document.contact['ROI'].focus()");
-            } else if ($("#ROI").val() < 1 || $("#ROI").val() > 100) {
-                alert("Invalid Value! Pleae fill in percentages from 1 - 100 !");
-                eval("document.contact['ROI'].focus()");
+                return;
+            }
+            else if ($("#ROI").val() < 1 || $("#ROI").val() > 100) {
                 $("#show").hide();
                 $("#OK").hide();
-            } else {
-                $("#button").removeAttr("disabled");
-                $("#show").show();
-                $("#OK").show();
+                alert("Invalid Value! Pleae fill in percentages from 1 - 100 !");
+                var result = 'Failed to evaluate due to error input !';
+                send(result);
+                return;
+
             }
+
+            var a = getAE();
+            var b = getInYear();
+            var c = getPE();
+            var d = getROI();
+            var result = (a * c) / Math.pow((1 + d / 100.0), b);
+            result = Math.round(result);
+            send('Value of Firm : ' + result + ' USD');
+            $("#show").show();
+            $("#OK").show();
         })
     })
 </script>
@@ -360,15 +382,7 @@
         var ROI = document.getElementById("ROI").value;
         return ROI;
     }
-    function calculate() {
-        var a = getAE();
-        var b = getInYear();
-        var c = getPE();
-        var d = getROI();
-        var result = (a * c) / Math.pow((1 + d / 100.0), b);
-        result = Math.round(result);
-        send('Value of Firm : ' + result + ' USD');
-    }
+
     function send(ans) {
         document.getElementById("result").innerHTML = ans;
     }
